@@ -31,19 +31,26 @@ def draw_line():
 
 class Player:
     def __init__(self):
-        img = pygame.image.load("images/guy1.png").convert_alpha()
-        self.img_tr = pygame.transform.scale(img, (21, 47))
-        self.img_rect = self.img_tr.get_rect(midbottom=(50, screen_height - tile_size * 2))
+        self.index = 0
+        self.direction = 0
+        img1 = pygame.image.load(f"images/guy1.png").convert_alpha()
+        img2 = pygame.image.load(f"images/guy2.png").convert_alpha()
+        self.img1 = pygame.transform.scale(img1, (21, 47))
+        self.img2 = pygame.transform.scale(img2, (21, 47))
+        self.player_img = [self.img1, self.img2]
+        self.player_rect = self.player_img[self.index].get_rect(midbottom=(100, screen_height - tile_size * 2))
 
     def update_player(self):
         pressed_key = pygame.key.get_pressed()
         if pressed_key[pygame.K_RIGHT]:
-            self.img_rect.x += 2
+            self.index += 0.2
+            if self.index >= len(self.player_img):
+                self.index = 0
+            self.player_rect.x += 2
         if pressed_key[pygame.K_LEFT]:
-            self.img_rect.x -= 2
+            pass
 
-
-        screen.blit(self.img_tr, self.img_rect)
+        screen.blit(self.player_img[int(self.index)], self.player_rect)
 
 
 class WorldMap:
