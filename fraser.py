@@ -32,25 +32,35 @@ def draw_line():
 class Player:
     def __init__(self):
         self.index = 0
+        self.index_l = 0
         self.direction = 0
         img1 = pygame.image.load(f"images/guy1.png").convert_alpha()
         img2 = pygame.image.load(f"images/guy2.png").convert_alpha()
-        self.img1 = pygame.transform.scale(img1, (21, 47))
-        self.img2 = pygame.transform.scale(img2, (21, 47))
-        self.player_img = [self.img1, self.img2]
-        self.player_rect = self.player_img[self.index].get_rect(midbottom=(100, screen_height - tile_size * 2))
+
+        self.img1 = [pygame.transform.scale(img1, (21, 47)), pygame.transform.scale(img2, (21, 47))]
+        self.img1_l = [pygame.transform.flip(num, True, False) for num in self.img1]
+
+        self.player_img = [self.img1, self.img1_l]
+        self.direction = 0
+        self.player_rect = self.player_img[self.direction][self.index].get_rect(
+            midbottom=(100, screen_height - tile_size * 2))
 
     def update_player(self):
         pressed_key = pygame.key.get_pressed()
         if pressed_key[pygame.K_RIGHT]:
+            self.direction = 0
             self.index += 0.2
             if self.index >= len(self.player_img):
                 self.index = 0
             self.player_rect.x += 2
-        if pressed_key[pygame.K_LEFT]:
-            pass
+        elif pressed_key[pygame.K_LEFT]:
+            self.direction = 1
+            self.index += 0.2
+            if self.index >= len(self.player_img):
+                self.index = 0
+            self.player_rect.x -= 2
 
-        screen.blit(self.player_img[int(self.index)], self.player_rect)
+        screen.blit(self.player_img[self.direction][int(self.index)], self.player_rect)
 
 
 class WorldMap:
