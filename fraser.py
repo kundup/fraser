@@ -34,6 +34,8 @@ class Player:
         self.index = 0
         self.index_l = 0
         self.direction = 0
+        self.vel = 0
+        self.jumped = False
         img1 = pygame.image.load(f"images/guy1.png").convert_alpha()
         img2 = pygame.image.load(f"images/guy2.png").convert_alpha()
 
@@ -60,6 +62,16 @@ class Player:
                 self.index = 0
             self.player_rect.x -= 2
 
+        if pressed_key[pygame.K_SPACE] and not self.jumped:
+            self.vel = -10
+            self.jumped = True
+
+        self.vel += 1
+        self.player_rect.bottom += self.vel
+        if self.player_rect.bottom >= screen_height - tile_size * 2:
+            self.player_rect.bottom = screen_height - tile_size * 2
+            self.vel = 0
+            self.jumped = False
         screen.blit(self.player_img[self.direction][int(self.index)], self.player_rect)
 
 
