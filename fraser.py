@@ -59,7 +59,7 @@ class Player:
             if self.index >= len(self.player_img):
                 self.index = 0
             dx = self.vel_x
-        elif pressed_key[pygame.K_LEFT]:
+        if pressed_key[pygame.K_LEFT]:
             self.direction = 1
             self.index += 0.2
             if self.index >= len(self.player_img):
@@ -86,7 +86,7 @@ class Player:
                     dy = tile[1].top - self.player_rect.bottom
                     self.vel_y = 0
                     self.jumped = False
-                elif self.vel_y < 0:  # Yukarı doğru zıplıyorsa
+                elif self.vel_y < 0:  # jumping
                     dy = tile[1].bottom - self.player_rect.top
                     self.vel_y = 0
 
@@ -125,7 +125,8 @@ class WorldMap:
                     grass_image_rect.y = tile_size * row_count
                     tile = (grass_image, grass_image_rect)
                     self.tile_list.append(tile)
-
+                if colomn == 3:
+                    pass
                 col_count += 1
             row_count += 1
 
@@ -154,9 +155,9 @@ world_map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 0, 0, 0, 0, 1],
     [1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
