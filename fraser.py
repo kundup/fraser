@@ -29,6 +29,27 @@ def draw_line():
         pygame.draw.line(screen, (255, 255, 255), (i * tile_size, 0), (i * tile_size, screen_height))
 
 
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.enem = pygame.image.load("images/blob.png").convert_alpha()
+        self.image = pygame.transform.smoothscale(self.enem, (21, 17))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
+        self.direction = 1
+        self.counter = 0
+
+    def update(self):
+        self.rect.x += self.direction
+        if self.counter >= 20:
+            self.direction = -1 * self.direction
+            self.counter = 0
+        self.counter += 1
+
+
+
 class Player:
     def __init__(self):
         self.index = 0
@@ -126,7 +147,8 @@ class WorldMap:
                     tile = (grass_image, grass_image_rect)
                     self.tile_list.append(tile)
                 if colomn == 3:
-                    pass
+                    enemy = Enemy(col_count * tile_size, row_count * tile_size + 5)
+                    enemy_group.add(enemy)
                 col_count += 1
             row_count += 1
 
@@ -150,11 +172,11 @@ world_map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 2, 2, 2, 2, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 0, 0, 0, 0, 1],
@@ -162,8 +184,10 @@ world_map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 
-worldmap = WorldMap(world_map)
+enemy_group = pygame.sprite.Group()
+
 player = Player()
+worldmap = WorldMap(world_map)
 
 run = True
 while run:
@@ -173,16 +197,18 @@ while run:
             run = False
 
     draw_sky()
+
     worldmap.drawing_dirt_grass()
     player.update_player()
-    # draw_line()
+    enemy_group.update()
+    enemy_group.draw(screen)
 
     pygame.display.update()
     clock.tick(60)
 
 pygame.quit()
 
-# collisions
+# collisions (done)
 # adding enemies
 # adding game levels
 # adding scores
