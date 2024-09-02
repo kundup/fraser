@@ -24,6 +24,7 @@ tile_size = 25
 game_over = 0
 score = 0
 
+
 def draw_environment(image, image_rect):
     screen.blit(image, image_rect)
 
@@ -63,9 +64,31 @@ class Enemy(pygame.sprite.Sprite):
 
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         self.coin = pygame.image.load("images/coin.png").convert_alpha()
         self.image = pygame.transform.scale(self.coin, (14, 13))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
+
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.coin = pygame.image.load("images/coin.png").convert_alpha()
+        self.image = pygame.transform.scale(self.coin, (14, 13))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
+
+
+class Lava(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.lava = pygame.image.load("images/lava.png").convert_alpha()
+        self.image = pygame.transform.scale(self.lava, (25, 21))
         self.rect = self.image.get_rect()
 
         self.rect.x = x
@@ -187,8 +210,13 @@ class WorldMap:
                     enemy_group.add(enemy)
 
                 if colomn == 4:
-                    coin = Coin(col_count * tile_size, row_count * tile_size)
+                    coin = Coin(col_count * tile_size, row_count * tile_size + 3)
                     coin_group.add(coin)
+
+                if colomn == 5:
+                    lava = Lava(col_count * tile_size, row_count * tile_size + 4)
+                    lava_group.add(lava)
+
                 col_count += 1
             row_count += 1
 
@@ -204,7 +232,7 @@ world_map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -217,8 +245,8 @@ world_map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 2, 2, 3, 3, 0, 3, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 5, 5, 2, 2, 3, 3, 0, 3, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1],
     [1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -226,6 +254,7 @@ world_map = [
 
 enemy_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
+lava_group = pygame.sprite.Group()
 
 player = Player()
 worldmap = WorldMap(world_map)
@@ -250,12 +279,16 @@ while run:
 
     else:
         enemy_group.update()
-        enemy_group.draw(screen)
-        coin_group.draw(screen)
         if pygame.sprite.spritecollide(player, coin_group, True):
             score += 1
-    all_text(f"My Score: {str(score)}", black, 35, 100,35)
+        if pygame.sprite.spritecollide(player, lava_group, False):
+            game_over = 1
 
+    enemy_group.draw(screen)
+    coin_group.draw(screen)
+    lava_group.draw(screen)
+
+    all_text(f"My Score: {str(score)}", black, 35, 100, 35)
 
     pygame.display.update()
     clock.tick(60)
