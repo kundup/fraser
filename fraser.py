@@ -19,14 +19,13 @@ ghost_image = pygame.image.load("images/ghost.png")
 over_white = (255, 255, 65)
 black = (0, 0, 0)
 
-# tile_size
+# definition values
 tile_size = 25
 game_over = 0
-
+score = 0
 
 def draw_environment(image, image_rect):
     screen.blit(image, image_rect)
-
 
 
 def draw_line():
@@ -60,6 +59,17 @@ class Enemy(pygame.sprite.Sprite):
             self.direction = -1 * self.direction
             self.counter = 0
         self.counter += 1
+
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.coin = pygame.image.load("images/coin.png").convert_alpha()
+        self.image = pygame.transform.scale(self.coin, (14, 13))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
 
 
 class Player(pygame.sprite.Sprite):
@@ -175,6 +185,10 @@ class WorldMap:
                 if colomn == 3:
                     enemy = Enemy(col_count * tile_size, row_count * tile_size + 5)
                     enemy_group.add(enemy)
+
+                if colomn == 4:
+                    coin = Coin(col_count * tile_size, row_count * tile_size)
+                    coin_group.add(coin)
                 col_count += 1
             row_count += 1
 
@@ -202,7 +216,7 @@ world_map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 2, 2, 3, 3, 0, 3, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1],
@@ -211,6 +225,7 @@ world_map = [
 ]
 
 enemy_group = pygame.sprite.Group()
+coin_group = pygame.sprite.Group()
 
 player = Player()
 worldmap = WorldMap(world_map)
@@ -223,7 +238,7 @@ while run:
             run = False
 
     draw_environment(sky_image, sky_image_rect)
-    draw_environment(sun_image, pygame.Rect(100,50, sun_image.get_width(), sun_image.get_height()))
+    draw_environment(sun_image, pygame.Rect(100, 50, sun_image.get_width(), sun_image.get_height()))
 
     worldmap.drawing_dirt_grass()
     game_over = player.update_player(game_over)
@@ -236,6 +251,11 @@ while run:
     else:
         enemy_group.update()
         enemy_group.draw(screen)
+        coin_group.draw(screen)
+        if pygame.sprite.spritecollide(player, coin_group, True):
+            score += 1
+    all_text(f"My Score: {str(score)}", black, 35, 100,35)
+
 
     pygame.display.update()
     clock.tick(60)
@@ -244,8 +264,8 @@ pygame.quit()
 
 # collisions (done)
 # adding enemies (done)
-# adding game levels
-# adding scores
+# adding coins and scores
+# adding levels
 # moving platforms
 # adding sounds
 # adding AI onto enemies
