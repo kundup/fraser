@@ -60,6 +60,17 @@ class Button:
         return self.clicked
 
 
+class Exit(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.x = x
+        self.y = y
+        image = pygame.image.load("images/exit.png")
+        self.image = pygame.transform.scale(image, (tile_size,tile_size))
+        self.rect = self.image.get_rect(midbottom = (self.x, self.y))
+
+
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -180,20 +191,20 @@ class Player(pygame.sprite.Sprite):
                 game_over = 1
 
             for platforms in platform_group:
-                if platforms.rect.colliderect(self.rect.x + dx, self.rect.y, self.rect.width, self.rect.height) :
+                if platforms.rect.colliderect(self.rect.x + dx, self.rect.y, self.rect.width, self.rect.height):
                     dx = 0
                 # Yatay çarpışma
                 if platforms.rect.colliderect(self.rect.x, self.rect.y + dy, self.rect.width, self.rect.height):
                     # oyuncu platformun altındaysa ve belirli bir mesafedeyse
                     if self.vel_y >= 0:  # Oyuncu aşağı iniyorsa
                         if abs(self.rect.bottom - platforms.rect.top) < self.threshold:
-                            self.rect.bottom = platforms.rect.top-1
+                            self.rect.bottom = platforms.rect.top - 1
                             dy = 0
                             self.vel_y = 0
                             self.jumped = False
                     elif self.vel_y < 0:  # Oyuncu yukarı çıkıyorsa
                         if abs(self.rect.top - platforms.rect.bottom) < self.threshold:
-                            self.rect.top = platforms.rect.bottom-1
+                            self.rect.top = platforms.rect.bottom - 1
                             dy = 0
                             self.vel_y = 0
 
@@ -282,6 +293,10 @@ class WorldMap:
                     platform = Platform(col_count * tile_size, row_count * tile_size, 0, 1)
                     platform_group.add(platform)
 
+                if colomn == 8:
+                    game_level = Exit(col_count * tile_size + 5, row_count * tile_size + 20)
+                    exit_group.add(game_level)
+
                 col_count += 1
             row_count += 1
 
@@ -297,7 +312,7 @@ world_map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 4, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -320,10 +335,13 @@ world_map = [
 enemy_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
+exit_group = pygame.sprite.Group()
 platform_group = pygame.sprite.Group()
 button = Button()
 player = Player()
 worldmap = WorldMap(world_map)
+
+
 
 run = True
 while run:
@@ -339,8 +357,8 @@ while run:
     game_over = player.update_player(game_over)
 
     if game_over:
-        if player.rect.y <= 100:
-            player.rect.y = 100
+        if player.rect.y <= 200:
+            player.rect.y = 200
             all_text("Game Over", over_white, 80, 300, 300)
 
             if button.draw():
@@ -358,6 +376,7 @@ while run:
     coin_group.draw(screen)
     lava_group.draw(screen)
     platform_group.draw(screen)
+    exit_group.draw(screen)
     all_text(f"My Score: {str(score)}", black, 35, 100, 35)
 
     pygame.display.update()
@@ -367,8 +386,8 @@ pygame.quit()
 
 # collisions (done)
 # adding enemies (done)
-# adding coins and scores
+# adding coins and scores (done)
 # adding levels
-# moving platforms
+# moving platforms (done)
 # adding sounds
 # adding AI onto enemies
